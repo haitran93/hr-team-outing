@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Outing · April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean:#1A6B8A; --ocean-deep:#0F4A63; --ocean-mid:#1E7A9C;
+  --sky:#4DA8C7; --wave:#A8D8EA; --wave-light:#D4EDF7;
+  --sand:#FAF7F2; --sand-dark:#EDE9E1;
+  --coral:#E07B5A; --text:#1C2B33; --muted:#7A9BAA; --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);overflow-x:hidden}
+
+/* OCEAN */
+#ocean-canvas{position:fixed;bottom:0;left:0;width:100%;height:220px;pointer-events:none;z-index:0}
+.bubble{position:fixed;border-radius:50%;background:rgba(168,216,234,0.18);border:1px solid rgba(168,216,234,0.3);pointer-events:none;z-index:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:0.4}100%{transform:translateY(-100vh) scale(0.6);opacity:0}}
+.shimmer{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 50%,rgba(77,168,199,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(168,216,234,0.08) 0%,transparent 50%);animation:shimmerMove 8s ease-in-out infinite alternate}
+@keyframes shimmerMove{0%{opacity:0.6}100%{opacity:1}}
+
+/* LAYOUT */
+.page{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 40px 320px}
+
+/* CHAPTER DIVIDER */
+.chapter{display:flex;align-items:center;gap:16px;margin:90px 0 60px}
+.chapter-line{flex:1;height:1px;background:linear-gradient(90deg,var(--wave),transparent)}
+.chapter-label{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px}
+.hero-line{width:64px;height:3px;background:var(--wave);border-radius:2px;margin-bottom:24px;animation:expandLine 1.2s ease forwards}
+@keyframes expandLine{from{width:0}to{width:64px}}
+.hero-label{font-size:12px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;animation:fadeUp 0.8s 0.3s both}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(64px,9vw,100px);font-weight:700;color:var(--ocean);line-height:0.95;animation:fadeUp 0.9s 0.5s both}
+.hero-title em{font-style:italic;color:var(--sky)}
+.hero-sub{font-size:17px;color:var(--muted);font-weight:300;margin-top:24px;animation:fadeUp 0.8s 0.7s both}
+.hero-tags{display:flex;gap:10px;margin-top:36px;animation:fadeUp 0.8s 0.9s both}
+.hero-tag{background:rgba(168,216,234,0.25);color:var(--ocean);border:1px solid rgba(168,216,234,0.5);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:500}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION FADE */
+.section{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;margin-bottom:56px}
+.section.visible{opacity:1;transform:translateY(0)}
+
+/* SECTION HEADER */
+.sec-pill{display:inline-flex;align-items:center;background:var(--ocean);color:white;border-radius:50px;padding:5px 14px;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px}
+.sec-pill.coral{background:var(--coral)}.sec-pill.sky{background:var(--sky)}.sec-pill.wave{background:var(--wave);color:var(--ocean)}
+.sec-title{font-family:'Playfair Display',serif;font-size:38px;color:var(--ocean);line-height:1.1;margin-bottom:6px}
+.sec-sub{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:24px}
+.sec-divider{height:2px;background:linear-gradient(90deg,var(--wave),transparent);border-radius:2px;margin-bottom:24px}
+
+/* AGENDA */
+.agenda-row{display:grid;grid-template-columns:28px 150px 1fr 68px;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--sand-dark)}
+.agenda-row:last-child{border-bottom:none}
+.ag-dot{width:8px;height:8px;border-radius:50%;background:var(--wave);justify-self:center}
+.ag-dot.coral{background:var(--coral)}.ag-dot.sky{background:var(--sky)}.ag-dot.ocean{background:var(--ocean)}
+.ag-label{font-weight:500;font-size:14px}.ag-desc{font-size:13px;color:var(--muted)}.ag-time{font-weight:600;font-size:12px;color:var(--ocean);text-align:right}
+
+/* CARDS */
+.card-grid{display:grid;gap:16px}
+.card-grid.two{grid-template-columns:1fr 1fr}
+.card-grid.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--white);border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(26,107,138,0.07);border-top:3px solid var(--wave)}
+.card.coral{border-top-color:var(--coral)}.card.ocean-top{border-top-color:var(--ocean)}
+.card-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:10px}
+.card-body{font-size:14px;color:var(--text);line-height:1.7}
+.card-stat{font-family:'Playfair Display',serif;font-size:28px;color:var(--ocean);margin-top:10px}
+
+/* REVEAL ITEMS */
+.reveal-items{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+.reveal-item{display:flex;align-items:flex-start;gap:14px;background:var(--white);border-radius:12px;padding:18px 22px;box-shadow:0 2px 16px rgba(26,107,138,0.06);border-left:4px solid var(--wave);opacity:0;transform:translateX(-10px);transition:all 0.5s ease}
+.reveal-item.shown{opacity:1;transform:translateX(0)}
+.rev-num{width:30px;height:30px;border-radius:50%;background:var(--wave-light);color:var(--ocean);font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rev-text{font-size:14px;color:var(--text);line-height:1.6;padding-top:4px}
+
+/* PROMPTS */
+.prompt-block{background:var(--sky);border-radius:20px;padding:32px}
+.prompt-block .sec-title{color:white}
+.prompt-block .sec-sub{color:rgba(255,255,255,0.7);margin-bottom:20px}
+.prompt-cards{display:flex;flex-direction:column;gap:11px;margin-bottom:20px}
+.prompt-card{display:grid;grid-template-columns:52px 1fr;background:rgba(255,255,255,0.95);border-radius:11px;overflow:hidden;box-shadow:0 3px 16px rgba(26,107,138,0.1)}
+.prompt-num{background:var(--ocean);color:white;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}
+.prompt-text{padding:16px 18px;font-size:14px;color:var(--text);line-height:1.5}
+.timer-chips{display:flex;gap:10px}
+.timer-chip{background:rgba(255,255,255,0.2);color:white;border-radius:50px;padding:6px 14px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.35)}
+
+/* PAIRS */
+.pairs-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.pair-card{background:var(--white);border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 12px rgba(26,107,138,0.06);opacity:0;transform:scale(0.96);transition:all 0.4s ease}
+.pair-card.shown{opacity:1;transform:scale(1)}
+.pair-icon{width:36px;height:36px;background:var(--wave-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.pair-names{font-size:14px;font-weight:500;color:var(--text)}
+.reveal-btn{background:var(--ocean);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:16px;transition:all 0.2s}
+.reveal-btn:hover{background:var(--ocean-deep)}.reveal-btn:disabled{opacity:0.3;cursor:default}
+.convo-box{background:var(--white);border-radius:12px;padding:18px 22px;box-shadow:0 2px 12px rgba(26,107,138,0.06)}
+.convo-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:9px}
+.convo-item{display:flex;gap:8px;font-size:13px;color:var(--text);line-height:1.5;margin-bottom:6px}
+.convo-dot{width:5px;height:5px;background:var(--sky);border-radius:50%;margin-top:7px;flex-shrink:0}
+
+/* BRIDGE NOTE */
+.bridge-note{background:var(--wave-light);border-radius:12px;padding:16px 20px;border-left:3px solid var(--sky);margin-bottom:8px}
+.bridge-note p{font-size:13px;color:var(--ocean);font-style:italic;line-height:1.6}
+
+/* INSIGHT BOX */
+.insight-box{background:var(--white);border-radius:12px;padding:18px 22px;box-shadow:0 2px 12px rgba(26,107,138,0.06);margin-top:16px}
+.insight-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:8px}
+.insight-input{width:100%;border:1.5px solid var(--sand-dark);border-radius:8px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--sand);outline:none;transition:border-color 0.2s;resize:none;min-height:60px}
+.insight-input:focus{border-color:var(--sky);background:var(--white)}
+.insight-hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* WORD CLOUD */
+.wc-block{background:var(--white);border-radius:20px;padding:28px;box-shadow:0 4px 24px rgba(26,107,138,0.07);border:1px solid var(--wave-light)}
+.wc-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#e8f7f0;color:#1a8a5a;border-radius:50px;padding:4px 11px;font-size:11px;font-weight:600}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#1a8a5a;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.qr-toggle{display:flex;align-items:center;gap:7px;background:none;border:1.5px solid var(--wave);border-radius:50px;padding:5px 13px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ocean);cursor:pointer;transition:all 0.2s}
+.qr-toggle:hover{background:var(--wave-light)}
+.qr-drawer{display:none;background:var(--wave-light);border-radius:12px;padding:16px 18px;margin-bottom:14px;align-items:center;gap:16px}
+.qr-drawer.open{display:flex}
+.qr-drawer img{width:72px;height:72px;border-radius:8px;flex-shrink:0}
+.qr-url{font-size:11px;color:var(--ocean);font-weight:500;word-break:break-all;margin-bottom:4px}
+.qr-hint{font-size:11px;color:var(--muted);line-height:1.5}
+.wc-input-row{display:flex;gap:8px;margin-bottom:13px}
+.wc-input{flex:1;border:2px solid var(--wave);border-radius:8px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--sand);outline:none;transition:border-color 0.2s}
+.wc-input:focus{border-color:var(--ocean);background:var(--white)}
+.wc-add{background:var(--ocean);color:white;border:none;border-radius:8px;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.wc-add:hover{background:var(--ocean-deep)}
+.wc-clear{background:none;border:1.5px solid var(--sand-dark);border-radius:8px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.2s}
+.wc-clear:hover{border-color:var(--coral);color:var(--coral)}
+.wc-cloud{min-height:120px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:4px 0}
+.wc-word{font-family:'Playfair Display',serif;cursor:pointer;transition:color 0.2s;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.wc-word:hover{color:var(--coral)!important}
+@keyframes popIn{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+.wc-empty{color:var(--muted);font-size:13px;font-style:italic}
+
+/* VERBAL ROUND */
+.verbal-box{background:var(--ocean);border-radius:14px;padding:22px 26px;margin-top:16px}
+.verbal-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--wave);margin-bottom:8px}
+.verbal-text{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);line-height:1.4}
+
+/* HR BLOCK */
+.hr-block{background:var(--sky);border-radius:20px;padding:32px}
+.hr-block .sec-title{color:white}
+.hr-block .sec-sub{color:rgba(255,255,255,0.7);margin-bottom:20px}
+.intent-card{background:rgba(255,255,255,0.95);border-radius:12px;padding:22px 26px;border-left:5px solid var(--ocean);margin-bottom:14px}
+.intent-word{font-family:'Playfair Display',serif;font-size:22px;color:var(--ocean);margin-bottom:6px}
+.intent-def{font-size:14px;color:var(--text);line-height:1.7}
+.question-box{background:var(--ocean);border-radius:12px;padding:22px 26px}
+.q-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--wave);margin-bottom:7px}
+.q-text{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);line-height:1.3}
+
+/* CLOSING */
+.closing-block{text-align:center;padding:64px 40px;position:relative;overflow:hidden;border-radius:24px}
+.closing-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--wave-light),var(--sand));z-index:0}
+.closing-content{position:relative;z-index:1}
+.closing-big{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,46px);color:var(--ocean);line-height:1.3;margin-bottom:8px}
+.closing-sub{font-size:15px;font-style:italic;color:var(--sky);font-family:'Playfair Display',serif;margin-bottom:28px}
+.closing-names{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:24px}
+.closing-name{background:rgba(168,216,234,0.3);color:var(--ocean);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:500;border:1px solid rgba(168,216,234,0.5)}
+.closing-thanks{font-size:13px;color:var(--muted);font-style:italic}
+
+/* SCROLL TOP */
+.scroll-top{position:fixed;bottom:32px;right:22px;z-index:100;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(168,216,234,0.45);color:var(--ocean);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,107,138,0.12);opacity:0;pointer-events:none}
+.scroll-top.visible{opacity:1;pointer-events:all}
+.scroll-top:hover{background:var(--ocean);color:white}
+
+/* PHONE PAGE */
+#phoneInputPage{display:none;position:fixed;inset:0;background:var(--sand);z-index:999;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center}
+</style>
+</head>
+<body>
+
+<canvas id="ocean-canvas"></canvas>
+<div class="shimmer"></div>
+
+<!-- PHONE INPUT PAGE -->
+<div id="phoneInputPage">
+  <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--ocean);margin-bottom:7px" id="phoneTitle">What surprised you?</div>
+  <div style="color:var(--muted);font-size:14px;margin-bottom:26px" id="phoneHint">Type one word or short phrase</div>
+  <input id="phoneInput" style="width:100%;max-width:320px;border:2px solid var(--wave);border-radius:12px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:18px;text-align:center;outline:none;color:var(--text);background:var(--white);display:block;margin:0 auto" placeholder="Your word...">
+  <button onclick="submitPhoneWord()" style="margin:14px auto 0;background:var(--ocean);color:white;border:none;border-radius:12px;padding:14px 0;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;width:100%;max-width:320px;display:block">Submit</button>
+  <div id="phoneThanks" style="display:none;margin-top:16px;color:var(--ocean);font-family:'Playfair Display',serif;font-size:18px">✓ Added! You can submit another.</div>
+</div>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">↑</button>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-line"></div>
+    <div class="hero-label">Zalopay HR · April 2026</div>
+    <div class="hero-title">Self.<br><em>Others.</em><br>Team.</div>
+    <div class="hero-sub">Team Outing · A morning for connection</div>
+    <div class="hero-tags">
+      <span class="hero-tag">~2.5 hours</span>
+      <span class="hero-tag">Phan Thiet</span>
+    </div>
+  </section>
+
+  <!-- AGENDA -->
+  <section class="section" id="agenda">
+    <div class="sec-pill">Overview</div>
+    <div class="sec-title">Today's agenda</div>
+    <div class="sec-sub">A morning built around knowing yourself, understanding others, and seeing the bigger picture.</div>
+    <div class="sec-divider"></div>
+    <div>
+      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Open</div><div class="ag-desc">Why we're here</div><div class="ag-time">10 min</div></div>
+      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 1 · Self</div><div class="ag-desc">Know yourself first</div><div class="ag-time">35 min</div></div>
+      <div class="agenda-row"><div class="ag-dot sky"></div><div class="ag-label">Part 2 · Others</div><div class="ag-desc">Understand someone else</div><div class="ag-time">55 min</div></div>
+      <div class="agenda-row"><div class="ag-dot"></div><div class="ag-label">Break</div><div class="ag-desc">Rest & reset</div><div class="ag-time">10 min</div></div>
+      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 3 · Team</div><div class="ag-desc">Where we are & where we're going</div><div class="ag-time">35 min</div></div>
+      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Close</div><div class="ag-desc">Final wrap up</div><div class="ag-time">5 min</div></div>
+    </div>
+  </section>
+
+  <!-- OPEN -->
+  <section class="section" id="open">
+    <div class="sec-pill coral">Open · 10 min</div>
+    <div class="sec-title">Why we're here.</div>
+    <div class="sec-divider"></div>
+    <div class="card-grid two">
+      <div class="card coral"><div class="card-label">The habit</div><div class="card-body">Feedback, relationships, and communication don't happen by accident. They need dedicated space — that's why we do this quarterly.</div></div>
+      <div class="card"><div class="card-label">Today's purpose</div><div class="card-body">Step out of work mode. See things from a different angle. Come back with a clearer sense of who you're working with — and why.</div></div>
+    </div>
+  </section>
+
+  <!-- CHAPTER: SELF -->
+  <div class="chapter section"><div class="chapter-line"></div><div class="chapter-label">Part 1 · Self</div><div class="chapter-line" style="background:linear-gradient(90deg,transparent,var(--wave))"></div></div>
+
+  <!-- PROMPTS -->
+  <section class="section" id="prompts">
+    <div class="prompt-block">
+      <div class="sec-pill wave" style="margin-bottom:14px">Your turn</div>
+      <div class="sec-title">Write before you speak.</div>
+      <div class="sec-sub">Write first, then share.</div>
+      <div class="prompt-cards">
+        <div class="prompt-card"><div class="prompt-num">01</div><div class="prompt-text">Something people on this team probably don't know about you.</div></div>
+        <div class="prompt-card"><div class="prompt-num">02</div><div class="prompt-text">One thing that shaped how you work — from anywhere in your life, not just Zalopay.</div></div>
+        <div class="prompt-card"><div class="prompt-num">03</div><div class="prompt-text">One thing you're hoping for this year. One thing you're quietly worried about.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER: OTHERS -->
+  <div class="chapter section"><div class="chapter-line"></div><div class="chapter-label">Part 2 · Others</div><div class="chapter-line" style="background:linear-gradient(90deg,transparent,var(--wave))"></div></div>
+
+  <!-- PAIRS -->
+  <section class="section" id="pairs">
+    <div class="sec-pill sky">Pairs</div>
+    <div class="sec-title">Understand someone else.</div>
+    <div class="sec-sub">Give it the full time. Good conversations need space.</div>
+    <div class="sec-divider"></div>
+    <div class="pairs-grid">
+      <div class="pair-card" id="pair1"><div class="pair-icon">🐚</div><div><div class="pair-names">Lan Anh + Hậu</div></div></div>
+      <div class="pair-card" id="pair2"><div class="pair-icon">🪸</div><div><div class="pair-names">Thy + Huyền</div></div></div>
+      <div class="pair-card" id="pair3"><div class="pair-icon">🌊</div><div><div class="pair-names">Phương + Nguyệt</div></div></div>
+      <div class="pair-card" id="pair4"><div class="pair-icon">⛵</div><div><div class="pair-names">Vĩ + Nhi</div></div></div>
+      <div class="pair-card" id="pair5"><div class="pair-icon">🐠</div><div><div class="pair-names">Trang + Hoàng Anh</div></div></div>
+    </div>
+    <button class="reveal-btn" onclick="revealPairs()">Reveal pairs →</button>
+    <div class="convo-box">
+      <div class="convo-title">In conversation</div>
+      <div class="convo-item"><div class="convo-dot"></div><span>Share from your Part 1 writing. Listen to understand — not to respond.</span></div>
+      <div class="convo-item"><div class="convo-dot"></div><span>What does their answer make you think about your own?</span></div>
+      <div class="convo-item"><div class="convo-dot"></div><span>When sharing back: let the <em>listener</em> speak first — "what surprised you about your partner?" — before the pair reports.</span></div>
+    </div>
+  </section>
+
+  <!-- SYNTHESIS -->
+  <section class="section" id="synthesis">
+    <!-- WORD CLOUD 1 -->
+    <div class="wc-block">
+      <div class="wc-top-row">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--ocean);margin-bottom:4px">What surprised you?</div>
+          <div class="live-badge"><span class="live-dot"></span>Live responses</div>
+        </div>
+        <button class="qr-toggle" onclick="toggleQR(1)">📱 QR</button>
+      </div>
+      <div class="qr-drawer" id="qrDrawer1">
+        <img id="qrImg1" src="" alt="QR">
+        <div><div class="qr-url" id="qrUrl1">Loading...</div><div class="qr-hint">Scan to submit from your phone. Responses appear here in real time.</div></div>
+      </div>
+      <div class="wc-input-row">
+        <input class="wc-input" id="wcInput1" placeholder="Type here directly..." onkeydown="if(event.key==='Enter')addWord(1)">
+        <button class="wc-add" onclick="addWord(1)">Add</button>
+        <button class="wc-clear" onclick="clearWords(1)">Clear</button>
+      </div>
+      <div class="wc-cloud" id="wcCloud1"><span class="wc-empty">Words appear here as people submit...</span></div>
+    </div>
+
+  </section>
+
+  <!-- CHAPTER: TEAM -->
+  <div class="chapter section"><div class="chapter-line"></div><div class="chapter-label">Part 3 · Team</div><div class="chapter-line" style="background:linear-gradient(90deg,transparent,var(--wave))"></div></div>
+
+  <!-- ZALOPAY CONTEXT -->
+  <section class="section" id="zalopay">
+    <div class="sec-pill">Where Zalopay is</div>
+    <div class="sec-title">From the patterns you heard — to the bigger picture.</div>
+    <div class="sec-sub">Reality · Hardship · Opportunity</div>
+    <div class="sec-divider"></div>
+    <div class="card-grid three">
+      <div class="card"><div class="card-label">Reality</div><div class="card-body">What is Zalopay to you?<br><br>Veterans: what has it become?<br>Newcomers: why did you choose it?</div></div>
+      <div class="card coral"><div class="card-label">Hardship</div><div class="card-body">We're close to break-even — and that's exactly what makes this moment both scary and real. The goal is clear. So is what's at stake.</div></div>
+      <div class="card ocean-top"><div class="card-label">Opportunity</div><div class="card-body">Profitability unlocks everything.</div><div class="card-stat">Zalopay tỷ đô</div><div class="card-body" style="margin-top:8px;font-size:12px;color:var(--muted)">56 listed companies in Vietnam have crossed the $1B mark.</div></div>
+    </div>
+  </section>
+
+  <!-- HR + INTENTIONAL -->
+  <section class="section" id="hr">
+    <div class="hr-block">
+      <div class="sec-pill wave" style="margin-bottom:14px">Where HR fits in</div>
+      <div class="sec-title">Where HR fits in.</div>
+      <div class="sec-sub">I hope you feel like you come to work with everyone — not for anyone.</div>
+      <div class="intent-card"><div class="intent-word">One word: intentional.</div><div class="intent-def">Be deliberate about what you put out, how you show up, and why it matters. We'll go deeper on this together soon.</div></div>
+      <div class="question-box"><div class="q-label">Discussion</div><div class="q-text">Knowing all of this — what will you do differently?</div></div>
+    </div>
+  </section>
+
+  <!-- CLOSING WORD CLOUD -->
+  <section class="section" id="wc2">
+    <div class="sec-pill coral">Close</div>
+    <div class="sec-title">Knowing all of this — what will you do differently?</div>
+    <div class="sec-sub">One word each. Say it out loud first, then it goes on screen.</div>
+    <div class="sec-divider"></div>
+    <div class="wc-block">
+      <div class="wc-top-row">
+        <div class="live-badge"><span class="live-dot"></span>Live responses</div>
+        <button class="qr-toggle" onclick="toggleQR(2)">📱 QR</button>
+      </div>
+      <div class="qr-drawer" id="qrDrawer2">
+        <img id="qrImg2" src="" alt="QR">
+        <div><div class="qr-url" id="qrUrl2">Loading...</div><div class="qr-hint">Scan and submit one word.</div></div>
+      </div>
+      <div class="wc-input-row">
+        <input class="wc-input" id="wcInput2" placeholder="Type here directly..." onkeydown="if(event.key==='Enter')addWord(2)">
+        <button class="wc-add" onclick="addWord(2)">Add</button>
+        <button class="wc-clear" onclick="clearWords(2)">Clear</button>
+      </div>
+      <div class="wc-cloud" id="wcCloud2"><span class="wc-empty">Words appear here as people submit...</span></div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="section" id="closing">
+    <div class="closing-block">
+      <div class="closing-bg"></div>
+      <div class="closing-content">
+      <div class="closing-big">Somewhere out there is a deadline.<br>Not here though.</div>
+        <div class="closing-names">
+          <span class="closing-name" style="background:rgba(26,107,138,0.15);border-color:rgba(26,107,138,0.3);color:#1A6B8A">Hải</span>
+          <span class="closing-name" style="background:rgba(77,168,199,0.15);border-color:rgba(77,168,199,0.3);color:#2E7FA8">Lan Anh</span>
+          <span class="closing-name" style="background:rgba(224,123,90,0.15);border-color:rgba(224,123,90,0.3);color:#C05A35">Thy</span>
+          <span class="closing-name" style="background:rgba(46,139,110,0.15);border-color:rgba(46,139,110,0.3);color:#2E8B6E">Phương</span>
+          <span class="closing-name" style="background:rgba(91,127,166,0.15);border-color:rgba(91,127,166,0.3);color:#4A6A96">Vĩ</span>
+          <span class="closing-name" style="background:rgba(168,168,90,0.15);border-color:rgba(168,168,90,0.3);color:#7A7A20">Trang</span>
+          <span class="closing-name" style="background:rgba(168,216,234,0.35);border-color:rgba(168,216,234,0.6);color:#1A6B8A">Hậu</span>
+          <span class="closing-name" style="background:rgba(224,123,90,0.1);border-color:rgba(224,123,90,0.25);color:#B05030">Huyền</span>
+          <span class="closing-name" style="background:rgba(46,110,140,0.15);border-color:rgba(46,110,140,0.3);color:#2E6E8C">Nguyệt</span>
+          <span class="closing-name" style="background:rgba(150,100,180,0.12);border-color:rgba(150,100,180,0.25);color:#8050A0">Nhi</span>
+          <span class="closing-name" style="background:rgba(50,150,100,0.12);border-color:rgba(50,150,100,0.25);color:#308060">Hoàng Anh</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end .page -->
+
+<script>
+// PHONE MODE
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  const slot=p.get('poll');
+  if(slot){
+    document.getElementById('scrollTop').style.display='none';
+    document.querySelector('.page').style.display='none';
+    document.getElementById('ocean-canvas').style.display='none';
+    const page=document.getElementById('phoneInputPage');
+    page.style.display='flex';
+    if(slot==='2'){
+      document.getElementById('phoneTitle').textContent='What will you do differently?';
+      document.getElementById('phoneHint').textContent='One word — what are you committing to?';
+    }
+    window._phoneSlot=parseInt(slot);
+  }
+})();
+
+// OCEAN WAVES
+const canvas=document.getElementById('ocean-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,t=0;
+function resizeCanvas(){W=canvas.width=window.innerWidth;H=canvas.height=220}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+function drawWaves(){
+  ctx.clearRect(0,0,W,H);
+  [{amp:18,freq:0.012,speed:0.02,y:140,color:'rgba(168,216,234,0.35)',phase:0},
+   {amp:14,freq:0.018,speed:0.028,y:160,color:'rgba(77,168,199,0.25)',phase:2},
+   {amp:10,freq:0.022,speed:0.035,y:180,color:'rgba(26,107,138,0.2)',phase:4},
+   {amp:20,freq:0.009,speed:0.015,y:120,color:'rgba(168,216,234,0.15)',phase:1}
+  ].forEach(w=>{
+    ctx.beginPath();ctx.moveTo(0,H);
+    for(let x=0;x<=W;x+=3){
+      const y=w.y+Math.sin(x*w.freq+t*w.speed+w.phase)*w.amp+Math.sin(x*w.freq*1.7+t*w.speed*0.7+w.phase)*w.amp*0.4;
+      ctx.lineTo(x,y);
+    }
+    ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
+    ctx.fillStyle=w.color;ctx.fill();
+  });
+  t++;requestAnimationFrame(drawWaves);
+}
+drawWaves();
+
+// BUBBLES
+function makeBubble(){
+  const b=document.createElement('div');b.className='bubble';
+  const size=Math.random()*18+6;
+  b.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;bottom:-${size}px;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*4}s`;
+  document.body.appendChild(b);
+  setTimeout(()=>b.remove(),(Math.random()*12+8)*1000+4000);
+}
+for(let i=0;i<12;i++)makeBubble();
+setInterval(makeBubble,1800);
+
+// SCROLL TOP
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('scrollTop');
+  if(btn)btn.classList.toggle('visible',window.scrollY>400);
+});
+
+// SCROLL FADE-IN
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.06});
+document.querySelectorAll('.section').forEach(s=>observer.observe(s));
+
+// PAIRS REVEAL
+let pairsRevealed=false;
+function revealPairs(){
+  if(pairsRevealed)return;pairsRevealed=true;
+  ['pair1','pair2','pair3','pair4','pair5'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('shown'),i*140));
+  document.querySelector('.reveal-btn').disabled=true;
+  document.querySelector('.reveal-btn').textContent='Pairs revealed ✓';
+}
+
+// QR
+function toggleQR(slot){document.getElementById('qrDrawer'+slot).classList.toggle('open')}
+function setupQR(){
+  const base=window.location.href.split('?')[0];
+  [1,2].forEach(slot=>{
+    const url=base+'?poll='+slot;
+    document.getElementById('qrImg'+slot).src='https://quickchart.io/qr?text='+encodeURIComponent(url)+'&size=180&margin=2';
+    document.getElementById('qrUrl'+slot).textContent=url.length>60?url.substring(0,57)+'...':url;
+  });
+}
+setupQR();
+
+// WORD CLOUDS
+const wordData={1:[],2:[]};
+const sizes=[20,26,30,18,34,22,28,24,16,32];
+const colors=['var(--ocean)','var(--sky)','var(--coral)','var(--ocean-deep)','#2E8B6E','#5B7FA6'];
+function addWord(slot){
+  const input=document.getElementById('wcInput'+slot);
+  const val=input.value.trim();if(!val)return;
+  wordData[slot].push(val);input.value='';renderCloud(slot);input.focus();
+  try{window.storage.set('wc-'+slot,JSON.stringify(wordData[slot]),true)}catch(e){}
+}
+function clearWords(slot){
+  wordData[slot]=[];
+  document.getElementById('wcCloud'+slot).innerHTML='<span class="wc-empty">Words appear here as people submit...</span>';
+  try{window.storage.set('wc-'+slot,'[]',true)}catch(e){}
+}
+function renderCloud(slot){
+  const cloud=document.getElementById('wcCloud'+slot);
+  if(!wordData[slot].length){cloud.innerHTML='<span class="wc-empty">Words appear here as people submit...</span>';return}
+  cloud.innerHTML='';
+  wordData[slot].forEach((w,i)=>{
+    const s=document.createElement('span');s.className='wc-word';s.textContent=w;
+    const sz=sizes[i%sizes.length]+Math.floor(Math.random()*5);
+    s.style.fontSize=sz+'px';s.style.color=colors[i%colors.length];s.style.fontWeight=sz>26?'700':'400';
+    s.onclick=()=>{wordData[slot].splice(i,1);renderCloud(slot)};
+    cloud.appendChild(s);
+  });
+}
+async function pollWords(){
+  for(const slot of[1,2]){
+    try{
+      const r=await window.storage.get('wc-'+slot,true);
+      if(r&&r.value){const remote=JSON.parse(r.value);if(remote.length!==wordData[slot].length){wordData[slot]=remote;renderCloud(slot)}}
+    }catch(e){}
+  }
+}
+setInterval(pollWords,2000);
+
+// PHONE SUBMIT
+async function submitPhoneWord(){
+  const val=document.getElementById('phoneInput').value.trim();if(!val)return;
+  const slot=window._phoneSlot||1;
+  try{
+    let existing=[];
+    try{const r=await window.storage.get('wc-'+slot,true);if(r&&r.value)existing=JSON.parse(r.value)}catch(e){}
+    existing.push(val);
+    await window.storage.set('wc-'+slot,JSON.stringify(existing),true);
+    document.getElementById('phoneInput').value='';
+    document.getElementById('phoneThanks').style.display='block';
+    setTimeout(()=>document.getElementById('phoneThanks').style.display='none',2500);
+  }catch(e){alert('Could not submit — ask the facilitator to type it in.')}
+}
+</script>
+</body>
+</html>
