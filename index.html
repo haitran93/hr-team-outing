@@ -50,12 +50,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 /* SECTION HEADER */
 .sec-pill{display:inline-flex;align-items:center;background:var(--ocean);color:white;border-radius:50px;padding:5px 14px;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px}
 .sec-pill.coral{background:var(--coral)}.sec-pill.sky{background:var(--sky)}.sec-pill.wave{background:var(--wave);color:var(--ocean)}
-.sec-title{font-family:'Playfair Display',serif;font-size:38px;color:var(--ocean);line-height:1.1;margin-bottom:6px}
+.sec-title{font-family:'Playfair Display',serif;font-size:38px;font-weight:400;color:var(--ocean);line-height:1.1;margin-bottom:6px}
 .sec-sub{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:24px}
 .sec-divider{height:2px;background:linear-gradient(90deg,var(--wave),transparent);border-radius:2px;margin-bottom:24px}
 
 /* AGENDA */
-.agenda-row{display:grid;grid-template-columns:28px 150px 1fr 68px;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--sand-dark)}
+.agenda-row{display:grid;grid-template-columns:28px 160px 1fr;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--sand-dark)}
 .agenda-row:last-child{border-bottom:none}
 .ag-dot{width:8px;height:8px;border-radius:50%;background:var(--wave);justify-self:center}
 .ag-dot.coral{background:var(--coral)}.ag-dot.sky{background:var(--sky)}.ag-dot.ocean{background:var(--ocean)}
@@ -91,8 +91,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 
 /* PAIRS */
 .pairs-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
-.pair-card{background:var(--white);border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 12px rgba(26,107,138,0.06);opacity:0;transform:scale(0.96);transition:all 0.4s ease}
-.pair-card.shown{opacity:1;transform:scale(1)}
 .pair-icon{width:36px;height:36px;background:var(--wave-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .pair-names{font-size:14px;font-weight:500;color:var(--text)}
 .reveal-btn{background:var(--ocean);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:16px;transition:all 0.2s}
@@ -170,7 +168,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 @keyframes nameFloat{0%{transform:var(--base-t)}100%{transform:var(--float-t)}}
 
 /* TIMER OVERLAY */
-.timer-overlay{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(15,74,99,0.92);backdrop-filter:blur(12px);border-radius:50px;padding:10px 24px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(15,74,99,0.3);opacity:0;pointer-events:none;transition:opacity 0.3s}
+.timer-overlay{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(15,74,99,0.92);backdrop-filter:blur(12px);border-radius:50px;padding:10px 24px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(15,74,99,0.3);opacity:0;pointer-events:none;transition:opacity 0.3s}
 .timer-overlay.visible{opacity:1;pointer-events:all}
 .timer-display{font-family:'Playfair Display',serif;font-size:28px;color:white;letter-spacing:0.04em;min-width:80px;text-align:center}
 .timer-display.warning{color:#FFB347}
@@ -191,15 +189,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 @keyframes soundPulse{0%,100%{box-shadow:0 0 0 0 rgba(26,107,138,0.4)}50%{box-shadow:0 0 0 8px rgba(26,107,138,0)}}
 
 /* CINEMATIC */
-.cinematic-overlay{position:fixed;inset:0;background:#000;z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.8s ease}
+.cinematic-overlay{position:fixed;inset:0;background:#000;z-index:500;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.8s ease;overflow:hidden}
 .cinematic-overlay.active{opacity:1;pointer-events:all}
-.cinematic-text{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);color:white;text-align:center;opacity:0;letter-spacing:0.06em;line-height:1.2}
-.cinematic-text.visible{animation:cinematicFade 6s ease forwards}
-@keyframes cinematicFade{0%{opacity:0;transform:scale(0.95)}15%{opacity:1;transform:scale(1)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.02)}}
-.cinematic-sub{font-family:'DM Sans',sans-serif;font-size:16px;color:rgba(255,255,255,0.5);text-align:center;margin-top:16px;opacity:0;letter-spacing:0.12em;text-transform:uppercase}
-.cinematic-sub.visible{animation:cinematicFade 6s 0.8s ease forwards}
+.cinematic-text{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);color:white;text-align:center;opacity:0;letter-spacing:0.06em;line-height:1.2;position:relative;z-index:2}
+.cinematic-text.visible{animation:cinematicFade 7s ease forwards}
+@keyframes cinematicFade{0%{opacity:0;transform:scale(0.93)}12%{opacity:1;transform:scale(1)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
+.cinematic-sub{font-family:'DM Sans',sans-serif;font-size:16px;color:rgba(255,255,255,0.55);text-align:center;margin-top:16px;opacity:0;letter-spacing:0.12em;text-transform:uppercase;position:relative;z-index:2}
+.cinematic-sub.visible{animation:cinematicFade 7s 0.8s ease forwards}
 .cinematic-trigger{background:var(--ocean);color:white;border:none;border-radius:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-top:12px}
 .cinematic-trigger:hover{background:var(--ocean-deep)}
+/* confetti particle */
+.confetti-particle{position:absolute;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:1;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* flash burst */
+.cinematic-flash{position:absolute;inset:0;background:white;opacity:0;z-index:3;pointer-events:none;animation:flashBurst 0.6s ease forwards}
+@keyframes flashBurst{0%{opacity:0}10%{opacity:0.35}30%{opacity:0.1}100%{opacity:0}}
+
+/* PAIRS DRAMATIC */
+.pair-card{background:var(--white);border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 12px rgba(26,107,138,0.06);opacity:0;transform:scale(0.8) translateY(20px);transition:all 0.5s cubic-bezier(0.34,1.4,0.64,1)}
+.pair-card.shown{opacity:1;transform:scale(1) translateY(0)}
+.pair-card.shown:hover{transform:scale(1.02) translateY(-2px);box-shadow:0 8px 28px rgba(26,107,138,0.14)}
 
 /* WORD CLOUD ENHANCEMENTS */
 .wc-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -256,8 +265,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 <!-- TIMER OVERLAY -->
 <div class="timer-overlay" id="timerOverlay">
   <div class="timer-display" id="timerDisplay">15:00</div>
-  <button class="timer-btn" onclick="toggleTimer()">⏸</button>
-  <button class="timer-btn" onclick="closeTimer()">✕</button>
+  <button class="timer-btn" onclick="toggleTimer()" id="timerToggleBtn">⏸</button>
 </div>
 
 <!-- TIMER LAUNCHER (hidden by default) -->
@@ -275,7 +283,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 <button class="scroll-top" id="timerToggleBtn" style="bottom:76px;opacity:1;pointer-events:all" onclick="toggleTimerLauncher()" title="Timer">⏱</button>
 
 <!-- AMBIENT SOUND -->
-<button class="sound-btn" id="soundBtn" onclick="toggleSound()" title="Ambient ocean sounds">🌊</button>
+<button class="sound-btn" id="soundBtn" onclick="toggleSound()" title="Ambient ocean sounds">🔇</button>
 
 <!-- SCROLL TOP -->
 <button class="scroll-top" id="scrollTop" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">↑</button>
@@ -285,12 +293,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
   <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero-line"></div>
-    <div class="hero-label">Zalopay HR · April 2026</div>
+    <div class="hero-label">Zalopay HR · Phan Thiet · April 2026</div>
     <div class="hero-title">Good things<br><em>take time.</em></div>
-    <div class="hero-sub">Self · Others · Team · Phan Thiet · April 2026</div>
-    <div class="hero-tags">
-      <span class="hero-tag">~2.5 hours</span>
-    </div>
   </section>
 
   <!-- AGENDA -->
@@ -300,12 +304,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
     <div class="sec-sub">A morning built around knowing yourself, understanding others, and seeing the bigger picture.</div>
     <div class="sec-divider"></div>
     <div>
-      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Open</div><div class="ag-desc">Why we're here</div><div class="ag-time">10 min</div></div>
-      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 1 · Self</div><div class="ag-desc">Know yourself first</div><div class="ag-time">35 min</div></div>
-      <div class="agenda-row"><div class="ag-dot sky"></div><div class="ag-label">Part 2 · Others</div><div class="ag-desc">Understand someone else</div><div class="ag-time">55 min</div></div>
-      <div class="agenda-row"><div class="ag-dot"></div><div class="ag-label">Break</div><div class="ag-desc">Rest & reset</div><div class="ag-time">10 min</div></div>
-      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 3 · Team</div><div class="ag-desc">Where we are & where we're going</div><div class="ag-time">35 min</div></div>
-      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Close</div><div class="ag-desc">Final wrap up</div><div class="ag-time">5 min</div></div>
+      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Open</div><div class="ag-desc">Why we're here</div></div>
+      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 1 · Self</div><div class="ag-desc">Know yourself first</div></div>
+      <div class="agenda-row"><div class="ag-dot sky"></div><div class="ag-label">Part 2 · Others</div><div class="ag-desc">Understand someone else</div></div>
+      <div class="agenda-row"><div class="ag-dot"></div><div class="ag-label">Break</div><div class="ag-desc">Rest & reset</div></div>
+      <div class="agenda-row"><div class="ag-dot ocean"></div><div class="ag-label">Part 3 · Team</div><div class="ag-desc">Where we are & where we're going</div></div>
+      <div class="agenda-row"><div class="ag-dot coral"></div><div class="ag-label">Close</div><div class="ag-desc">Final wrap up</div></div>
     </div>
   </section>
 
@@ -346,14 +350,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
     <div class="sec-title">Understand someone else.</div>
     <div class="sec-sub">Give it the full time. Good conversations need space.</div>
     <div class="sec-divider"></div>
-    <div class="pairs-grid">
-      <div class="pair-card" id="pair1"><div class="pair-icon">🐚</div><div><div class="pair-names">Lan Anh + Hậu</div></div></div>
-      <div class="pair-card" id="pair2"><div class="pair-icon">🪸</div><div><div class="pair-names">Thy + Huyền</div></div></div>
-      <div class="pair-card" id="pair3"><div class="pair-icon">🌊</div><div><div class="pair-names">Phương + Nguyệt</div></div></div>
-      <div class="pair-card" id="pair4"><div class="pair-icon">⛵</div><div><div class="pair-names">Vĩ + Nhi</div></div></div>
-      <div class="pair-card" id="pair5"><div class="pair-icon">🐠</div><div><div class="pair-names">Trang + Hoàng Anh</div></div></div>
+    <div class="pairs-grid" id="pairsGrid">
+      <div class="pair-card" id="pair1"><div class="pair-icon">🐚</div><div><div class="pair-names">Lan Anh + Hau</div></div></div>
+      <div class="pair-card" id="pair2"><div class="pair-icon">🪸</div><div><div class="pair-names">Thy + Huyen</div></div></div>
+      <div class="pair-card" id="pair3"><div class="pair-icon">🌊</div><div><div class="pair-names">Phuong + Nguyet</div></div></div>
+      <div class="pair-card" id="pair4"><div class="pair-icon">⛵</div><div><div class="pair-names">Vi + Nhi</div></div></div>
+      <div class="pair-card" id="pair5"><div class="pair-icon">🐠</div><div><div class="pair-names">Trang + Hoang Anh</div></div></div>
     </div>
-    <button class="reveal-btn" onclick="revealPairs()">Reveal pairs →</button>
+    <button class="reveal-btn" id="pairsRevealBtn" onclick="revealPairs()">✦ Reveal pairs</button>
     <div class="convo-box">
       <div class="convo-title">In conversation</div>
       <div class="convo-item"><div class="convo-dot"></div><span>Share from your Part 1 writing. Listen to understand — not to respond.</span></div>
@@ -673,14 +677,56 @@ const observer=new IntersectionObserver(entries=>{
 },{threshold:0.06});
 document.querySelectorAll('.section').forEach(s=>observer.observe(s));
 
-// ── CINEMATIC ──
+// ── PAIRS REVEAL - dramatic ──
+let pairsRevealed=false;
+function revealPairs(){
+  if(pairsRevealed)return;
+  pairsRevealed=true;
+  const btn=document.getElementById('pairsRevealBtn');
+  btn.disabled=true;
+  btn.textContent='✦ Revealed';
+  ['pair1','pair2','pair3','pair4','pair5'].forEach((id,i)=>{
+    setTimeout(()=>{
+      const el=document.getElementById(id);
+      el.classList.add('shown');
+    },i*250);
+  });
+}
+
+// ── CINEMATIC with confetti ──
 function launchCinematic(){
   const o=document.getElementById('cinematicOverlay');
   const t=document.getElementById('cinematicText');
   const s=document.getElementById('cinematicSub');
   o.classList.add('active');
-  setTimeout(()=>{t.classList.add('visible');s.classList.add('visible')},100);
-  setTimeout(()=>closeCinematic(),7500);
+  // flash burst
+  const flash=document.createElement('div');
+  flash.className='cinematic-flash';
+  o.appendChild(flash);
+  setTimeout(()=>flash.remove(),800);
+  // text
+  setTimeout(()=>{t.classList.add('visible');s.classList.add('visible')},200);
+  // confetti burst at 1s
+  setTimeout(()=>burstConfetti(o),1000);
+  // second burst at 2.5s
+  setTimeout(()=>burstConfetti(o),2500);
+  setTimeout(()=>closeCinematic(),8500);
+}
+function burstConfetti(container){
+  const colors=['#A8D8EA','#4DA8C7','#E07B5A','#FFD700','#FF6B9D','#FFFFFF','#B8E994','#74B9FF'];
+  for(let i=0;i<60;i++){
+    const p=document.createElement('div');
+    p.className='confetti-particle';
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    const x=20+Math.random()*60; // % from left
+    const dur=1.8+Math.random()*1.4;
+    const delay=Math.random()*0.6;
+    const size=5+Math.random()*7;
+    const borderRadius=Math.random()>0.5?'50%':'2px';
+    p.style.cssText=`left:${x}%;top:-10px;width:${size}px;height:${size}px;background:${color};border-radius:${borderRadius};animation-duration:${dur}s;animation-delay:${delay}s`;
+    container.appendChild(p);
+    setTimeout(()=>p.remove(),(dur+delay)*1000+100);
+  }
 }
 function closeCinematic(){
   const o=document.getElementById('cinematicOverlay');
@@ -730,12 +776,12 @@ function toggleSound(){
     soundSources=[];
     soundPlaying=false;
     document.getElementById('soundBtn').classList.remove('playing');
-    document.getElementById('soundBtn').textContent='🌊';
+    document.getElementById('soundBtn').textContent='🔇';
   }else{
     startOceanSound();
     soundPlaying=true;
     document.getElementById('soundBtn').classList.add('playing');
-    document.getElementById('soundBtn').textContent='🔇';
+    document.getElementById('soundBtn').textContent='🌊';
   }
 }
 function startOceanSound(){
