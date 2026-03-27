@@ -50,7 +50,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 /* SECTION HEADER */
 .sec-pill{display:inline-flex;align-items:center;background:var(--ocean);color:white;border-radius:50px;padding:5px 14px;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px}
 .sec-pill.coral{background:var(--coral)}.sec-pill.sky{background:var(--sky)}.sec-pill.wave{background:var(--wave);color:var(--ocean)}
-.sec-title{font-family:'Playfair Display',serif;font-size:38px;font-weight:400;color:var(--ocean);line-height:1.1;margin-bottom:6px}
+.sec-title{font-family:'DM Sans',sans-serif;font-size:34px;font-weight:300;color:var(--ocean);line-height:1.15;margin-bottom:6px;letter-spacing:-0.01em}
 .sec-sub{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:24px}
 .sec-divider{height:2px;background:linear-gradient(90deg,var(--wave),transparent);border-radius:2px;margin-bottom:24px}
 
@@ -176,7 +176,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:0.5}}
 .timer-btn{background:none;border:1px solid rgba(255,255,255,0.3);border-radius:50px;padding:5px 14px;font-family:'DM Sans',sans-serif;font-size:12px;color:white;cursor:pointer;transition:all 0.2s}
 .timer-btn:hover{background:rgba(255,255,255,0.15)}
-.timer-launcher{position:fixed;bottom:80px;right:22px;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(168,216,234,0.45);border-radius:12px;padding:10px 14px;box-shadow:0 4px 16px rgba(26,107,138,0.12)}
+.timer-launcher{position:fixed;bottom:164px;right:22px;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(168,216,234,0.45);border-radius:12px;padding:10px 14px;box-shadow:0 4px 16px rgba(26,107,138,0.12)}
 .timer-launcher-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:8px}
 .timer-presets{display:flex;flex-direction:column;gap:5px}
 .timer-preset{background:none;border:1px solid var(--wave);border-radius:6px;padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ocean);cursor:pointer;text-align:left;transition:all 0.2s}
@@ -275,15 +275,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
     <button class="timer-preset" onclick="startTimer(15)">15 min — Write</button>
     <button class="timer-preset" onclick="startTimer(30)">30 min — Pairs</button>
     <button class="timer-preset" onclick="startTimer(10)">10 min — Break</button>
-    <button class="timer-preset" onclick="startTimer(5)">5 min — Close</button>
   </div>
 </div>
 
 <!-- TIMER TOGGLE BTN -->
-<button class="scroll-top" id="timerToggleBtn" style="bottom:76px;opacity:1;pointer-events:all" onclick="toggleTimerLauncher()" title="Timer">⏱</button>
+<button class="scroll-top" id="timerLaunchBtn" style="bottom:120px;opacity:1;pointer-events:all" onclick="toggleTimerLauncher()" title="Timer">⏱</button>
 
 <!-- AMBIENT SOUND -->
 <button class="sound-btn" id="soundBtn" onclick="toggleSound()" title="Ambient ocean sounds">🔇</button>
+
+<!-- FULLSCREEN -->
+<button class="scroll-top" id="fullscreenBtn" style="bottom:76px;opacity:1;pointer-events:all" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
 
 <!-- SCROLL TOP -->
 <button class="scroll-top" id="scrollTop" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">↑</button>
@@ -315,7 +317,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);o
 
   <!-- OPEN -->
   <section class="section" id="open">
-    <div class="sec-pill coral">Open · 10 min</div>
+    <div class="sec-pill coral">Open</div>
     <div class="sec-title">Why we're here.</div>
     <div class="sec-divider"></div>
     <div class="card-grid two">
@@ -665,6 +667,21 @@ function scatterNames(){
   },500); // wait for fade-out to complete
 }
 
+// FULLSCREEN
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+    document.getElementById('fullscreenBtn').textContent='✕';
+  }else{
+    document.exitFullscreen();
+    document.getElementById('fullscreenBtn').textContent='⛶';
+  }
+}
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement)
+    document.getElementById('fullscreenBtn').textContent='⛶';
+});
+
 // TIMER TOGGLE
 function toggleTimerLauncher(){
   const l=document.getElementById('timerLauncher');
@@ -761,7 +778,7 @@ function updateTimerDisplay(){
 }
 function toggleTimer(){
   timerRunning=!timerRunning;
-  document.querySelector('.timer-btn').textContent=timerRunning?'⏸':'▶';
+  document.getElementById('timerToggleBtn').textContent=timerRunning?'⏸':'▶';
 }
 function closeTimer(){
   clearInterval(timerInterval);
@@ -852,13 +869,6 @@ Identify 3-4 key themes. Reply ONLY with valid JSON in this format (no markdown,
     summaryEl.textContent='Could not analyse themes — check connection.';
   }
   spinner.classList.remove('visible');
-}
-let pairsRevealed=false;
-function revealPairs(){
-  if(pairsRevealed)return;pairsRevealed=true;
-  ['pair1','pair2','pair3','pair4','pair5'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('shown'),i*140));
-  document.querySelector('.reveal-btn').disabled=true;
-  document.querySelector('.reveal-btn').textContent='Pairs revealed ✓';
 }
 
 // QR
