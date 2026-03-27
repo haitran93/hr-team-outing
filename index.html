@@ -464,21 +464,42 @@ function setupQR(){
 }
 setupQR();
 
+// SUPABASE CONFIG
+const SUPABASE_URL='https://ammtquzkkglydvcjirpp.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbXRxdXpra2dseWR2Y2ppcnBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDM0MjgsImV4cCI6MjA5MDE3OTQyOH0.If9tv1fobAjX5EuokdlLw1eTPD7PqWUpEKhf-MVUMiw';
+const headers={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+
+async function sbFetch(path,opts={}){
+  const r=await fetch(SUPABASE_URL+path,{...opts,headers:{...headers,...(opts.headers||{})}});
+  return r.json();
+}
+
 // WORD CLOUDS
 const wordData={1:[],2:[]};
 const sizes=[20,26,30,18,34,22,28,24,16,32];
-const colors=['var(--ocean)','var(--sky)','var(--coral)','var(--ocean-deep)','#2E8B6E','#5B7FA6'];
-function addWord(slot){
+const colors=['#1A6B8A','#4DA8C7','#E07B5A','#0F4A63','#2E8B6E','#5B7FA6'];
+
+async function addWord(slot){
   const input=document.getElementById('wcInput'+slot);
   const val=input.value.trim();if(!val)return;
-  wordData[slot].push(val);input.value='';renderCloud(slot);input.focus();
-  try{window.storage.set('wc-'+slot,JSON.stringify(wordData[slot]),true)}catch(e){}
+  input.value='';input.focus();
+  await sbFetch('/rest/v1/words',{method:'POST',body:JSON.stringify({slot,word:val})});
+  await loadWords(slot);
 }
-function clearWords(slot){
-  wordData[slot]=[];
-  document.getElementById('wcCloud'+slot).innerHTML='<span class="wc-empty">Words appear here as people submit...</span>';
-  try{window.storage.set('wc-'+slot,'[]',true)}catch(e){}
+
+async function clearWords(slot){
+  await sbFetch('/rest/v1/words?slot=eq.'+slot,{method:'DELETE'});
+  wordData[slot]=[];renderCloud(slot);
 }
+
+async function loadWords(slot){
+  const data=await sbFetch('/rest/v1/words?slot=eq.'+slot+'&order=created_at.asc&select=word');
+  if(Array.isArray(data)){
+    wordData[slot]=data.map(r=>r.word);
+    renderCloud(slot);
+  }
+}
+
 function renderCloud(slot){
   const cloud=document.getElementById('wcCloud'+slot);
   if(!wordData[slot].length){cloud.innerHTML='<span class="wc-empty">Words appear here as people submit...</span>';return}
@@ -486,34 +507,26 @@ function renderCloud(slot){
   wordData[slot].forEach((w,i)=>{
     const s=document.createElement('span');s.className='wc-word';s.textContent=w;
     const sz=sizes[i%sizes.length]+Math.floor(Math.random()*5);
-    s.style.fontSize=sz+'px';s.style.color=colors[i%colors.length];s.style.fontWeight=sz>26?'700':'400';
-    s.onclick=()=>{wordData[slot].splice(i,1);renderCloud(slot)};
+    s.style.fontSize=sz+'px';s.style.color=colors[i%colors.length];
+    s.style.fontWeight=sz>26?'700':'400';
     cloud.appendChild(s);
   });
 }
-async function pollWords(){
-  for(const slot of[1,2]){
-    try{
-      const r=await window.storage.get('wc-'+slot,true);
-      if(r&&r.value){const remote=JSON.parse(r.value);if(remote.length!==wordData[slot].length){wordData[slot]=remote;renderCloud(slot)}}
-    }catch(e){}
-  }
-}
-setInterval(pollWords,2000);
+
+// Poll every 3s
+setInterval(()=>{loadWords(1);loadWords(2)},3000);
+loadWords(1);loadWords(2);
 
 // PHONE SUBMIT
 async function submitPhoneWord(){
   const val=document.getElementById('phoneInput').value.trim();if(!val)return;
   const slot=window._phoneSlot||1;
   try{
-    let existing=[];
-    try{const r=await window.storage.get('wc-'+slot,true);if(r&&r.value)existing=JSON.parse(r.value)}catch(e){}
-    existing.push(val);
-    await window.storage.set('wc-'+slot,JSON.stringify(existing),true);
+    await sbFetch('/rest/v1/words',{method:'POST',body:JSON.stringify({slot,word:val})});
     document.getElementById('phoneInput').value='';
     document.getElementById('phoneThanks').style.display='block';
     setTimeout(()=>document.getElementById('phoneThanks').style.display='none',2500);
-  }catch(e){alert('Could not submit — ask the facilitator to type it in.')}
+  }catch(e){alert('Could not submit — try again.')}
 }
 </script>
 </body>
